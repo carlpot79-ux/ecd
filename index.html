@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Dental Screening Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#fafaf9">
+  <link rel="apple-touch-icon" href="icon.svg">
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <button class="back-btn" id="backBtn" style="visibility: hidden;">&larr;</button>
+      <div class="topbar-title">Dental Screening</div>
+      <button class="topbar-action">Done</button>
+    </div>
+    
+    <!-- SCREEN 1: Creche -->
+    <div id="screen-creche" class="screen active">
+      <div class="pad">
+        <div class="hero">
+          <div class="hero-label">START SCREENING</div>
+          <div class="hero-sub">Enter the name of the creche to begin.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <form id="crecheForm">
+          <!-- User Name Section -->
+          <div class="form-block" id="userNameBlock">
+            <label class="form-lbl" for="userName">YOUR NAME</label>
+            <input type="text" id="userName" name="userName" placeholder="e.g. Dr. Smith">
+          </div>
+          
+          <div class="form-block" id="userNameDisplayBlock" style="display: none; background: var(--surface2); padding: 12px 14px; border-radius: var(--r-sm); margin-bottom: 18px;">
+            <div style="font-size: 10px; color: var(--text3); letter-spacing: 0.05em; margin-bottom: 3px;">SCREENER</div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="font-weight: 500; font-size: 15px;" id="displayUserName"></div>
+              <button type="button" id="changeNameBtn" style="background: none; border: none; color: var(--text2); cursor: pointer; font-size: 12px; text-decoration: underline; font-family: 'DM Sans', sans-serif;">Change</button>
+            </div>
+          </div>
+
+          <div class="form-block">
+            <label class="form-lbl" for="crecheName">CRECHE NAME</label>
+            <input type="text" id="crecheName" name="crecheName" placeholder="e.g. Sunny Days Early Learning" required>
+          </div>
+
+          <button type="submit" class="primary-btn" id="startScreeningBtn" style="margin-top: 20px;">
+            Continue
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: Details -->
+    <div id="screen-details" class="screen">
+      <div class="pad">
+        
+        <div class="hero">
+          <div class="hero-label">NEW RECORD</div>
+          <div class="hero-sub" id="crecheSubtitle">Enter the details for this screening session below.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <form id="screeningForm">
+          <div class="form-block">
+            <label class="form-lbl" for="screened">NUMBER OF CHILDREN SCREENED</label>
+            <input type="number" id="screened" name="screened" min="0" placeholder="e.g. 25" required>
+          </div>
+
+          <div class="form-block">
+            <label class="form-lbl" for="cariesFree">CHILDREN CARIES FREE</label>
+            <input type="number" id="cariesFree" name="cariesFree" min="0" placeholder="e.g. 15" required>
+          </div>
+
+          <div class="form-block">
+            <label class="form-lbl" for="abscess">CHILDREN WITH ABSCESS</label>
+            <input type="number" id="abscess" name="abscess" min="0" placeholder="e.g. 2" required>
+          </div>
+
+          <div class="form-block">
+            <label class="form-lbl" for="initialCaries">INITIAL STAGE CARIES</label>
+            <input type="number" id="initialCaries" name="initialCaries" min="0" placeholder="e.g. 8" required>
+          </div>
+
+          <button type="submit" class="primary-btn" id="screeningBtn" style="margin-top: 20px;">
+            Save Data
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal Overlay -->
+  <div id="toast" class="modal-overlay">
+    <div class="modal" style="padding: 30px 20px; text-align: center; margin: auto; max-width: 300px; border-radius: 12px;">
+      <div style="font-size: 32px; margin-bottom: 10px;">✅</div>
+      <div class="modal-title" style="color: var(--green);">Record Saved</div>
+      <div class="modal-sub">The screening data has been stored locally.</div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
