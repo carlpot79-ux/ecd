@@ -25,11 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const displayUserName = document.getElementById('displayUserName');
   const changeNameBtn = document.getElementById('changeNameBtn');
   const userNameInput = document.getElementById('userName');
-  const msalLoginBtn = document.getElementById('msalLoginBtn');
   const syncStatus = document.getElementById('syncStatus');
 
   let currentCreche = '';
-  let isOneDriveConnected = false;
   
   // Initialization for Name Setup
   let savedName = localStorage.getItem('screenerName');
@@ -114,23 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast();
   });
 
-  // Microsoft OneDrive Login Handling
-  msalLoginBtn.addEventListener('click', async () => {
-    if (!isOneDriveConnected) {
-       const user = await signInOneDrive(); // Calls graph.js
-       if (user) {
-         isOneDriveConnected = true;
-         msalLoginBtn.style.display = 'none';
-         syncStatus.style.display = 'block';
-         syncStatus.innerText = 'Connected';
-         triggerSync();
-       }
-    }
-  });
-
   async function triggerSync() {
-    if (!isOneDriveConnected) return updateSyncStatus();
-    
     let records = [];
     const stored = localStorage.getItem('screeningRecords');
     if (stored) records = JSON.parse(stored);
@@ -139,13 +121,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (unsynced.length === 0) return updateSyncStatus();
     
     syncStatus.innerText = 'Syncing...';
+    syncStatus.style.color = 'var(--text3)';
     
+    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbz89MRRmGYGoiXhQSERAoQ4jXp8gSYnUKbANIi5OFydmBuAhY55WJ0TsHykbdp1YwODpQ/exec';
+
     for (let record of unsynced) {
        try {
-         await addRowToExcel(record);
+         // Firing to Google App Script using no-cors because Google forces a 302 redirect that breaks strict CORS handling.
+         // A successful offline catch will instantly throw an error preventing record.synced = true.
+         await fetch(WEBHOOK_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(record)
+         });
+         
          record.synced = true;
        } catch (err) {
-         console.error('Record failed to sync', err);
+         console.error('Record failed to sync (Offline Queue Triggered)', err);
        }
     }
     
@@ -159,13 +152,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (stored) records = JSON.parse(stored);
     let unsynced = records.filter(r => !r.synced);
 
-    if (isOneDriveConnected) {
-       syncStatus.innerText = unsynced.length === 0 ? 'Up to date' : `${unsynced.length} pending`;
+    if (unsynced.length === 0) {
+       syncStatus.innerText = 'Up to date';
+       syncStatus.style.color = 'var(--green)';
+    } else {
+       syncStatus.innerText = `${unsynced.length} pending`;
+       syncStatus.style.color = 'var(--orange)';
     }
   }
 
   window.addEventListener('online', () => {
-     if (isOneDriveConnected) triggerSync();
+     triggerSync();
   });
 
   function saveRecord(record) {
