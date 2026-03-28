@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     syncStatus.innerText = 'Syncing...';
     syncStatus.style.color = 'var(--text3)';
     
-    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbz89MRRmGYGoiXhQSERAoQ4jXp8gSYnUKbANIi5OFydmBuAhY55WJ0TsHykbdp1YwODpQ/exec';
+    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyA_0QlyIFCZ6dtqhol_vYRGvmIyUovCDtJ9Me8M_xFM3UYz2OL0GiBD49FdbT_I_xFIA/exec';
 
     for (let record of unsynced) {
        try {
