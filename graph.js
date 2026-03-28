@@ -2,7 +2,7 @@ const msalConfig = {
     auth: {
         clientId: "cb1ff984-d56c-48ab-b4c5-5b9be0c776e0",
         authority: "https://login.microsoftonline.com/common",
-        redirectUri: "http://localhost:51522" // Switch this if you host the app online!
+        redirectUri: window.location.href.split('?')[0].split('#')[0]
     },
     cache: {
         cacheLocation: "localStorage",
