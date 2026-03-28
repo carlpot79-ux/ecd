@@ -128,11 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let record of unsynced) {
        try {
          // Firing to Google App Script using no-cors because Google forces a 302 redirect that breaks strict CORS handling.
-         // A successful offline catch will instantly throw an error preventing record.synced = true.
+         // A successful offline catch will instantly throw a network error preventing record.synced = true.
          await fetch(WEBHOOK_URL, {
             method: 'POST',
             mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(record)
          });
          
