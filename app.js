@@ -25,8 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const displayUserName = document.getElementById('displayUserName');
   const changeNameBtn = document.getElementById('changeNameBtn');
   const userNameInput = document.getElementById('userName');
+  const msalLoginBtn = document.getElementById('msalLoginBtn');
+  const syncStatus = document.getElementById('syncStatus');
 
   let currentCreche = '';
+  let isOneDriveConnected = false;
   
   // Initialization for Name Setup
   let savedName = localStorage.getItem('screenerName');
@@ -111,7 +114,62 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast();
   });
 
+  // Microsoft OneDrive Login Handling
+  msalLoginBtn.addEventListener('click', async () => {
+    if (!isOneDriveConnected) {
+       const user = await signInOneDrive(); // Calls graph.js
+       if (user) {
+         isOneDriveConnected = true;
+         msalLoginBtn.style.display = 'none';
+         syncStatus.style.display = 'block';
+         syncStatus.innerText = 'Connected';
+         triggerSync();
+       }
+    }
+  });
+
+  async function triggerSync() {
+    if (!isOneDriveConnected) return updateSyncStatus();
+    
+    let records = [];
+    const stored = localStorage.getItem('screeningRecords');
+    if (stored) records = JSON.parse(stored);
+    
+    let unsynced = records.filter(r => !r.synced);
+    if (unsynced.length === 0) return updateSyncStatus();
+    
+    syncStatus.innerText = 'Syncing...';
+    
+    for (let record of unsynced) {
+       try {
+         await addRowToExcel(record);
+         record.synced = true;
+       } catch (err) {
+         console.error('Record failed to sync', err);
+       }
+    }
+    
+    localStorage.setItem('screeningRecords', JSON.stringify(records));
+    updateSyncStatus();
+  }
+  
+  function updateSyncStatus() {
+    let records = [];
+    const stored = localStorage.getItem('screeningRecords');
+    if (stored) records = JSON.parse(stored);
+    let unsynced = records.filter(r => !r.synced);
+
+    if (isOneDriveConnected) {
+       syncStatus.innerText = unsynced.length === 0 ? 'Up to date' : `${unsynced.length} pending`;
+    }
+  }
+
+  window.addEventListener('online', () => {
+     if (isOneDriveConnected) triggerSync();
+  });
+
   function saveRecord(record) {
+    record.synced = false;
     let records = [];
     const stored = localStorage.getItem('screeningRecords');
     if (stored) {
@@ -123,7 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     records.push(record);
     localStorage.setItem('screeningRecords', JSON.stringify(records));
+
+    // Automatically try to sync to cloud if connected
+    triggerSync();
   }
+
+  // Initial Sync Status check on startup
+  updateSyncStatus();
+
 
   function showToast() {
     toast.classList.add('open');

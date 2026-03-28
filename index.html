@@ -14,7 +14,8 @@
     <div class="topbar">
       <button class="back-btn" id="backBtn" style="visibility: hidden;">&larr;</button>
       <div class="topbar-title">Dental Screening</div>
-      <button class="topbar-action">Done</button>
+      <button class="topbar-action" id="msalLoginBtn" style="color: var(--green); font-weight: 500;">Link OneDrive</button>
+      <div id="syncStatus" class="topbar-action" style="display: none; color: var(--text3); font-size: 11px;">0 pending</div>
     </div>
     
     <!-- SCREEN 1: Creche -->
@@ -104,6 +105,10 @@
     </div>
   </div>
 
+  <!-- Microsoft MSAL -->
+  <script type="text/javascript" src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
+  <!-- App Scripts -->
+  <script src="graph.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
