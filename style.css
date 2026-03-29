@@ -268,6 +268,21 @@
     opacity: 1;
   }
 
+  /* RECENT PILLS */
+  .recent-pill {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    padding: 10px 14px;
+    flex: 0 0 auto;
+    cursor: pointer;
+    transition: transform 0.1s;
+    min-width: 120px;
+  }
+  .recent-pill:active { transform: scale(0.95); }
+  .recent-pill-name { font-weight: 500; font-size: 14px; color: var(--text); }
+  .recent-pill-ages { font-size: 10px; color: var(--text3); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.02em; }
+
   /* DASHBOARD NAV */
   .nav-grid {
     display: grid;

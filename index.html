@@ -92,6 +92,14 @@
 
         <div class="divider"></div>
 
+        <!-- RECENT CRECHES -->
+        <div id="recentCrechesWrap" style="display: none; margin-bottom: 24px;">
+          <div class="hero-label" style="font-size: 10px;">RECENT CRECHES</div>
+          <div id="recentCrechesList" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-top: 8px; scrollbar-width: none;">
+            <!-- Dynamic pills go here -->
+          </div>
+        </div>
+
         <form id="crecheForm">
           <div class="form-block">
             <label class="form-lbl" for="crecheName">CRECHE NAME</label>
@@ -101,6 +109,9 @@
           <div class="form-block">
             <label class="form-lbl" for="crecheAge">AGE GROUP</label>
             <input type="text" id="crecheAge" name="crecheAge" placeholder="e.g. 4-5" required>
+            <div id="ageError" style="color: var(--red); font-size: 12px; margin-top: 6px; display: none;">
+              This age group has already been screened for this creche.
+            </div>
           </div>
 
           <button type="submit" class="primary-btn" id="startScreeningBtn" style="margin-top: 20px;">
@@ -157,6 +168,18 @@
       <div style="font-size: 32px; margin-bottom: 10px;">✅</div>
       <div class="modal-title" style="color: var(--green);">Record Saved</div>
       <div class="modal-sub">The screening data has been stored locally.</div>
+    </div>
+  </div>
+
+  <!-- Confirm Save Modal -->
+  <div id="confirmSaveModal" class="modal-overlay">
+    <div class="modal" style="padding: 24px 20px 30px; border-radius: 12px 12px 0 0; width: 100%; max-width: 430px; margin: auto 0 0;">
+      <div class="modal-title" style="color: var(--text); font-size: 18px; margin-bottom: 12px;">Confirm Submission</div>
+      <div class="modal-sub" style="font-size: 14px; margin-bottom: 24px;">Once saved, you cannot change this data again. Would you like to save now or continue editing?</div>
+      <div style="display: flex; gap: 12px;">
+        <button id="cancelSaveBtn" style="flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--border-md); background: none; font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif;">Edit</button>
+        <button id="confirmSaveBtn" style="flex: 1; padding: 14px; border-radius: 12px; border: none; background: var(--text); color: white; font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif;">Save Data</button>
+      </div>
     </div>
   </div>
 

@@ -30,6 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logoutBtn');
   const togglePassword = document.getElementById('togglePassword');
   const loginPass = document.getElementById('loginPass');
+  const recentCrechesWrap = document.getElementById('recentCrechesWrap');
+  const recentCrechesList = document.getElementById('recentCrechesList');
+  const crecheNameInput = document.getElementById('crecheName');
+  const crecheAgeInput = document.getElementById('crecheAge');
+  const ageError = document.getElementById('ageError');
+  const confirmSaveModal = document.getElementById('confirmSaveModal');
+  const confirmSaveBtn = document.getElementById('confirmSaveBtn');
+  const cancelSaveBtn = document.getElementById('cancelSaveBtn');
 
   let currentCreche = '';
 
@@ -37,6 +45,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const checkLogin = () => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     if (isLoggedIn) {
+      // Recovery for "Unknown" screener name bug
+      if (!localStorage.getItem('loggedInUser')) {
+        localStorage.setItem('loggedInUser', 'eddy');
+      }
+
       screenLogin.classList.remove('active');
       screenNav.classList.add('active');
       screenCreche.classList.remove('active');
@@ -51,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- SCREEN TRANSITIONS ---
   startScreeningFlow.addEventListener('click', () => {
+    renderRecentCreches();
     screenNav.classList.remove('active');
     screenCreche.classList.add('active');
     backBtn.style.visibility = 'visible';
@@ -101,10 +115,23 @@ document.addEventListener('DOMContentLoaded', () => {
   crecheForm.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    const name = document.getElementById('crecheName').value;
-    const age = document.getElementById('crecheAge').value;
-    currentCreche = `${name} (${age})`;
+    const name = crecheNameInput.value.trim();
+    const age = crecheAgeInput.value.trim();
+    const fullName = `${name} (${age})`;
+
+    // Validation: Check if this Name (Age) already exists
+    const stored = localStorage.getItem('screeningRecords');
+    if (stored) {
+      const records = JSON.parse(stored);
+      const exists = records.some(r => r.creche.toLowerCase() === fullName.toLowerCase());
+      if (exists) {
+        ageError.style.display = 'block';
+        return;
+      }
+    }
     
+    ageError.style.display = 'none';
+    currentCreche = fullName;
     crecheSubtitle.innerText = 'Screening for: ' + currentCreche;
     
     // Transition UI
@@ -113,14 +140,75 @@ document.addEventListener('DOMContentLoaded', () => {
     backBtn.style.visibility = 'visible';
   });
 
+  // --- RECENT CRECHES LOGIC ---
+  function renderRecentCreches() {
+    const stored = localStorage.getItem('screeningRecords');
+    if (!stored) {
+      recentCrechesWrap.style.display = 'none';
+      return;
+    }
+
+    const records = JSON.parse(stored);
+    if (records.length === 0) {
+      recentCrechesWrap.style.display = 'none';
+      return;
+    }
+
+    // Group by Creche Name (before brackets)
+    const history = {}; // name -> set of ages
+    records.forEach(r => {
+      const match = r.creche.match(/^(.*) \((.*)\)$/);
+      if (match) {
+        const name = match[1];
+        const age = match[2];
+        if (!history[name]) history[name] = new Set();
+        history[name].add(age);
+      }
+    });
+
+    const uniqueNames = Object.keys(history);
+    if (uniqueNames.length === 0) {
+      recentCrechesWrap.style.display = 'none';
+      return;
+    }
+
+    recentCrechesWrap.style.display = 'block';
+    recentCrechesList.innerHTML = '';
+
+    // Show last 5 unique creches
+    uniqueNames.reverse().slice(0, 5).forEach(name => {
+      const ages = Array.from(history[name]).join(', ');
+      
+      const pill = document.createElement('div');
+      pill.className = 'recent-pill';
+      pill.innerHTML = `
+        <div class="recent-pill-name">${name}</div>
+        <div class="recent-pill-ages">Done: ${ages}</div>
+      `;
+      
+      pill.addEventListener('click', () => {
+        crecheNameInput.value = name;
+        crecheAgeInput.value = '';
+        crecheAgeInput.focus();
+        ageError.style.display = 'none';
+      });
+      
+      recentCrechesList.appendChild(pill);
+    });
+  }
+
+  // --- SAVE CONFIRMATION LOGIC ---
+  let pendingData = null;
+
   screeningForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    // Get Form Data
-    const formData = {
+    // Prepare data (but don't save yet)
+    const formattedDate = new Date().toISOString().split('T')[0];
+    pendingData = {
       id: Date.now(),
-      date: new Date().toISOString(),
-      screener: localStorage.getItem('loggedInUser') || 'Unknown',
+      date: formattedDate,
+      screener: localStorage.getItem('loggedInUser') || 'eddy',
       creche: currentCreche,
       screened: parseInt(document.getElementById('screened').value),
       cariesFree: parseInt(document.getElementById('cariesFree').value),
@@ -128,8 +216,19 @@ document.addEventListener('DOMContentLoaded', () => {
       initialCaries: parseInt(document.getElementById('initialCaries').value)
     };
 
+    // Show Confirmation Modal
+    confirmSaveModal.classList.add('open');
+  });
+
+  confirmSaveBtn.addEventListener('click', () => {
+    if (!pendingData) return;
+
     // Save to LocalStorage
-    saveRecord(formData);
+    saveRecord(pendingData);
+    pendingData = null;
+
+    // Close Modal
+    confirmSaveModal.classList.remove('open');
 
     // Reset Form
     screeningForm.reset();
@@ -143,6 +242,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Show Toast Notification
     showToast();
+  });
+
+  cancelSaveBtn.addEventListener('click', () => {
+    confirmSaveModal.classList.remove('open');
+    pendingData = null;
   });
 
   async function triggerSync() {
