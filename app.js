@@ -249,10 +249,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const screener = localStorage.getItem('loggedInUser') || 'eddy';
     
     if (type === 'screening') {
-      // Clean, single-sheet package for "Screenings"
+      // Data matches Sheet1 exactly
       pendingData = {
         id: Date.now(),
         'Type': 'screening',
+        'SheetName': 'Sheet1',
         'Date': formattedDate,
         'Screener': screener,
         'Creche': currentCreche,
@@ -262,17 +263,18 @@ document.addEventListener('DOMContentLoaded', () => {
         'Initial Caries': parseInt(document.getElementById('initialCaries').value) || 0
       };
     } else {
-      // Clean, single-sheet package for "Monitorings"
+      // Data matches Sheet2 exactly
       pendingData = {
         id: Date.now(),
         'Type': 'monitoring',
+        'SheetName': 'Sheet2',
         'Date': formattedDate,
         'By': screener,
         'Creche': currentCreche,
         'New Consent': parseInt(document.getElementById('m_consent').value) || 0,
         'Tooth brushes': parseInt(document.getElementById('m_brushes').value) || 0,
         'Toothpaste': parseInt(document.getElementById('m_pastes').value) || 0,
-        'Norms and Standards': document.getElementById('m_norms').checked,
+        'Norms and Standard': document.getElementById('m_norms').checked ? 'Yes' : 'No',
         'Children Educated': parseInt(document.getElementById('m_children_ed').value) || 0,
         'Parents Educated': parseInt(document.getElementById('m_parents_ed').value) || 0,
         'FV1': parseInt(document.getElementById('m_varnish1').value) || 0,
@@ -378,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
     syncStatus.innerText = 'Syncing...';
     syncStatus.style.color = 'var(--text3)';
     
-    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyA_0QlyIFCZ6dtqhol_vYRGvmIyUovCDtJ9Me8M_xFM3UYz2OL0GiBD49FdbT_I_xFIA/exec';
+    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbz66smbZSsT6IyZj7uOYrEA9YffzX1W6lz3nHlXHtAHCrLHSXhC25TikNvziuOrxtLcqA/exec';
 
     for (let record of unsynced) {
        try {
@@ -441,10 +443,4 @@ document.addEventListener('DOMContentLoaded', () => {
   updateSyncStatus();
 
 
-  function showToast() {
-    toast.classList.add('open');
-    setTimeout(() => {
-      toast.classList.remove('open');
-    }, 2500);
-  }
 });
