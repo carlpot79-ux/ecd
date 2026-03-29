@@ -241,3 +241,21 @@
   .income-row { background: #f0fdf4; border-color: #bbf7d0; }
   .income-amt { color: #16a34a; }
   .income-link-btn { width: 100%; padding: 12px; background: none; border: none; font-size: 14px; color: var(--text2); cursor: pointer; font-family: 'DM Sans', sans-serif; margin-top: 8px; }
+
+  /* LOGIN SCREEN */
+  #screen-login .pad {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 80vh;
+  }
+  #loginForm {
+    width: 100%;
+    margin-top: 20px;
+  }
+  #loginError {
+    background: var(--red-bg);
+    padding: 10px;
+    border-radius: var(--r-sm);
+    margin-bottom: 20px;
+  }

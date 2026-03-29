@@ -11,14 +11,50 @@
 </head>
 <body>
   <div class="app">
-    <div class="topbar">
+    <div class="topbar" id="appTopbar" style="display: none;">
       <button class="back-btn" id="backBtn" style="visibility: hidden;">&larr;</button>
       <div class="topbar-title">Dental Screening</div>
-      <div id="syncStatus" class="topbar-action" style="color: var(--text3); font-size: 11px; font-weight: 500; display: block;">Up to date</div>
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <div id="syncStatus" class="topbar-action" style="color: var(--text3); font-size: 11px; font-weight: 500;">Up to date</div>
+        <button id="logoutBtn" style="background: none; border: none; font-size: 18px; cursor: pointer; padding: 0;">📤</button>
+      </div>
+    </div>
+    
+    <!-- SCREEN 0: Login -->
+    <div id="screen-login" class="screen active">
+      <div class="pad" style="padding-top: 100px;">
+        <div class="hero" style="text-align: center;">
+          <div style="font-size: 48px; margin-bottom: 20px;">🦷</div>
+          <div class="hero-label">WELCOME</div>
+          <div class="hero-sub">Please log in to continue.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <form id="loginForm">
+          <div class="form-block">
+            <label class="form-lbl" for="loginUser">USERNAME</label>
+            <input type="text" id="loginUser" name="loginUser" placeholder="Username" required>
+          </div>
+
+          <div class="form-block">
+            <label class="form-lbl" for="loginPass">PASSWORD</label>
+            <input type="password" id="loginPass" name="loginPass" placeholder="Password" required>
+          </div>
+
+          <div id="loginError" style="color: var(--red); font-size: 13px; margin-top: 10px; display: none; text-align: center;">
+            Incorrect username or password.
+          </div>
+
+          <button type="submit" class="primary-btn" style="margin-top: 30px;">
+            Log In
+          </button>
+        </form>
+      </div>
     </div>
     
     <!-- SCREEN 1: Creche -->
-    <div id="screen-creche" class="screen active">
+    <div id="screen-creche" class="screen">
       <div class="pad">
         <div class="hero">
           <div class="hero-label">START SCREENING</div>

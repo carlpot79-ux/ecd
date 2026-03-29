@@ -26,8 +26,49 @@ document.addEventListener('DOMContentLoaded', () => {
   const changeNameBtn = document.getElementById('changeNameBtn');
   const userNameInput = document.getElementById('userName');
   const syncStatus = document.getElementById('syncStatus');
+  const loginForm = document.getElementById('loginForm');
+  const screenLogin = document.getElementById('screen-login');
+  const loginError = document.getElementById('loginError');
+  const appTopbar = document.getElementById('appTopbar');
+  const logoutBtn = document.getElementById('logoutBtn');
 
   let currentCreche = '';
+
+  // --- LOGIN LOGIC ---
+  const checkLogin = () => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (isLoggedIn) {
+      screenLogin.classList.remove('active');
+      screenCreche.classList.add('active');
+      appTopbar.style.display = 'flex';
+    } else {
+      screenLogin.classList.add('active');
+      screenCreche.classList.remove('active');
+      appTopbar.style.display = 'none';
+    }
+  };
+
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const user = document.getElementById('loginUser').value;
+    const pass = document.getElementById('loginPass').value;
+
+    if (user === 'eddy' && pass === '1') {
+      localStorage.setItem('isLoggedIn', 'true');
+      loginError.style.display = 'none';
+      checkLogin();
+    } else {
+      loginError.style.display = 'block';
+    }
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('isLoggedIn');
+    checkLogin();
+  });
+
+  // Run initial check
+  checkLogin();
   
   // Initialization for Name Setup
   let savedName = localStorage.getItem('screenerName');
