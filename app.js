@@ -101,7 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
   crecheForm.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    currentCreche = document.getElementById('crecheName').value;
+    const name = document.getElementById('crecheName').value;
+    const age = document.getElementById('crecheAge').value;
+    currentCreche = `${name} (${age})`;
+    
     crecheSubtitle.innerText = 'Screening for: ' + currentCreche;
     
     // Transition UI
