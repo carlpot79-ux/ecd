@@ -133,7 +133,7 @@
 
   .form-block { margin-bottom: 18px; }
   .form-lbl { font-size: 11px; letter-spacing: 0.07em; color: var(--text2); display: block; margin-bottom: 6px; }
-  input[type=text], input[type=number] { width: 100%; padding: 12px 14px; border: 1px solid var(--border-md); border-radius: var(--r-sm); font-size: 16px; background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; -webkit-appearance: none; appearance: none; }
+  input[type=text], input[type=number], input[type=password] { width: 100%; padding: 12px 14px; border: 1px solid var(--border-md); border-radius: var(--r-sm); font-size: 16px; background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; -webkit-appearance: none; appearance: none; }
   input:focus { outline: none; border-color: var(--text); }
   input[type=number]::-webkit-inner-spin-button { opacity: 0.4; }
   .cpicker { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -298,8 +298,17 @@
     padding-right: 48px;
   }
   #togglePassword {
-    opacity: 0.5;
+    opacity: 0.4;
     transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+  }
+  #togglePassword svg {
+    width: 20px;
+    height: 20px;
   }
   #togglePassword:active {
     opacity: 1;
