@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const syncStatus = document.getElementById('syncStatus');
   const loginForm = document.getElementById('loginForm');
   const screenLogin = document.getElementById('screen-login');
+  const screenNav = document.getElementById('screen-nav');
+  const startScreeningFlow = document.getElementById('startScreeningFlow');
   const loginError = document.getElementById('loginError');
   const appTopbar = document.getElementById('appTopbar');
   const logoutBtn = document.getElementById('logoutBtn');
@@ -39,14 +41,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     if (isLoggedIn) {
       screenLogin.classList.remove('active');
-      screenCreche.classList.add('active');
+      screenNav.classList.add('active');
+      screenCreche.classList.remove('active');
       appTopbar.style.display = 'flex';
     } else {
       screenLogin.classList.add('active');
+      screenNav.classList.remove('active');
       screenCreche.classList.remove('active');
       appTopbar.style.display = 'none';
     }
   };
+
+  // --- SCREEN TRANSITIONS ---
+  startScreeningFlow.addEventListener('click', () => {
+    screenNav.classList.remove('active');
+    screenCreche.classList.add('active');
+    backBtn.style.visibility = 'visible';
+  });
+
+  backBtn.addEventListener('click', () => {
+    if (screenDetails.classList.contains('active')) {
+      screenDetails.classList.remove('active');
+      screenCreche.classList.add('active');
+    } else {
+      screenCreche.classList.remove('active');
+      screenNav.classList.add('active');
+      backBtn.style.visibility = 'hidden';
+    }
+  });
 
   loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -115,12 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
     backBtn.style.visibility = 'visible';
   });
 
-  backBtn.addEventListener('click', () => {
-    screenDetails.classList.remove('active');
-    screenCreche.classList.add('active');
-    backBtn.style.visibility = 'hidden';
-  });
-
   screeningForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -144,9 +160,9 @@ document.addEventListener('DOMContentLoaded', () => {
     crecheForm.reset();
     currentCreche = '';
 
-    // Go back to screen 1
+    // Go back to dashboard (screen 1)
     screenDetails.classList.remove('active');
-    screenCreche.classList.add('active');
+    screenNav.classList.add('active');
     backBtn.style.visibility = 'hidden';
 
     // Show Toast Notification

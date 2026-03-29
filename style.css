@@ -259,3 +259,40 @@
     border-radius: var(--r-sm);
     margin-bottom: 20px;
   }
+
+  /* DASHBOARD NAV */
+  .nav-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-top: 10px;
+  }
+  .nav-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 24px 20px;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.1s;
+    font-family: inherit;
+  }
+  .nav-card:active {
+    transform: scale(0.98);
+    background: var(--surface2);
+  }
+  .nav-card-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+  .nav-card-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .nav-card-sub {
+    font-size: 13px;
+    color: var(--text3);
+    line-height: 1.4;
+  }
