@@ -73,10 +73,10 @@
             <div class="nav-card-sub">Start a new dental screening session.</div>
           </button>
 
-          <button class="nav-card" id="startMonitoringFlow" style="opacity: 0.6;">
+          <button class="nav-card" id="startMonitoringFlow">
             <div class="nav-card-icon">📊</div>
             <div class="nav-card-title">Monitoring</div>
-            <div class="nav-card-sub">View and analyze collected data. (Coming Soon)</div>
+            <div class="nav-card-sub">Start a dental monitoring session for a creche.</div>
           </button>
         </div>
       </div>
@@ -126,7 +126,7 @@
       <div class="pad">
         
         <div class="hero">
-          <div class="hero-label">NEW RECORD</div>
+          <div class="hero-label">NEW SCREENING</div>
           <div class="hero-sub" id="crecheSubtitle">Enter the details for this screening session below.</div>
         </div>
 
@@ -158,6 +158,108 @@
           </button>
         </form>
 
+      </div>
+    </div>
+
+    <!-- MONITORING SCREEN 1: Creche -->
+    <div id="screen-monitor-creche" class="screen">
+      <div class="pad">
+        <div class="hero">
+          <div class="hero-label">START MONITORING</div>
+          <div class="hero-sub">Enter the name of the creche for monitoring.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- RECENT MONITORS -->
+        <div id="recentMonitorsWrap" style="display: none; margin-bottom: 24px;">
+          <div class="hero-label" style="font-size: 10px;">RECENT CRECHES</div>
+          <div id="recentMonitorsList" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-top: 8px; scrollbar-width: none;">
+            <!-- Dynamic pills go here -->
+          </div>
+        </div>
+
+        <form id="monitorForm" autocomplete="off">
+          <div class="form-block">
+            <label class="form-lbl" for="monitorCrecheName">CRECHE NAME</label>
+            <input type="text" id="monitorCrecheName" name="monitorCrecheName" placeholder="e.g. Sunny Days" required autocomplete="off">
+          </div>
+
+          <button type="submit" class="primary-btn" style="margin-top: 20px;">
+            Continue
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MONITORING SCREEN 2: Details -->
+    <div id="screen-monitor-details" class="screen">
+      <div class="pad">
+        <div class="hero">
+          <div class="hero-label">NEW MONITORING</div>
+          <div class="hero-sub" id="monitorSubtitle">Enter the monitoring stats for this creche.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <form id="monitorDetailsForm" autocomplete="off">
+          <div class="form-block">
+            <label class="form-lbl" for="m_consent">NEW CONSENT FORMS</label>
+            <input type="number" id="m_consent" name="m_consent" min="0" placeholder="0" required autocomplete="off">
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+            <div style="flex:1;">
+              <label class="form-lbl" for="m_brushes">TOOTH BRUSHES</label>
+              <input type="number" id="m_brushes" name="m_brushes" min="0" placeholder="0" required autocomplete="off">
+            </div>
+            <div style="flex:1;">
+              <label class="form-lbl" for="m_pastes">TOOTH PASTES</label>
+              <input type="number" id="m_pastes" name="m_pastes" min="0" placeholder="0" required autocomplete="off">
+            </div>
+          </div>
+
+          <div class="form-block">
+            <div class="toggle-wrap">
+              <span class="form-lbl" style="margin-bottom:0;">NORMS & STANDARDS</span>
+              <label class="switch">
+                <input type="checkbox" id="m_norms">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+            <div style="flex:1;">
+              <label class="form-lbl" for="m_children_ed">CHILDREN EDUCATED</label>
+              <input type="number" id="m_children_ed" name="m_children_ed" min="0" placeholder="0" required autocomplete="off">
+            </div>
+            <div style="flex:1;">
+              <label class="form-lbl" for="m_parents_ed">PARENTS EDUCATED</label>
+              <input type="number" id="m_parents_ed" name="m_parents_ed" min="0" placeholder="0" required autocomplete="off">
+            </div>
+          </div>
+
+          <div class="hero-label" style="font-size: 10px; margin-bottom: 12px;">FLUORIDE VARNISH</div>
+          <div style="display: flex; gap: 10px; margin-bottom: 24px;">
+            <div style="flex:1;">
+              <label class="form-lbl" style="font-size: 9px;">VARNISH 1</label>
+              <input type="number" id="m_varnish1" name="m_varnish1" min="0" placeholder="0" required autocomplete="off">
+            </div>
+            <div style="flex:1;">
+              <label class="form-lbl" style="font-size: 9px;">VARNISH 2</label>
+              <input type="number" id="m_varnish2" name="m_varnish2" min="0" placeholder="0" required autocomplete="off">
+            </div>
+            <div style="flex:1;">
+              <label class="form-lbl" style="font-size: 9px;">VARNISH 3</label>
+              <input type="number" id="m_varnish3" name="m_varnish3" min="0" placeholder="0" required autocomplete="off">
+            </div>
+          </div>
+
+          <button type="submit" class="primary-btn" style="margin-top: 20px;">
+            Save Data
+          </button>
+        </form>
       </div>
     </div>
   </div>

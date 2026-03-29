@@ -39,7 +39,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const confirmSaveBtn = document.getElementById('confirmSaveBtn');
   const cancelSaveBtn = document.getElementById('cancelSaveBtn');
 
+  const startMonitoringFlow = document.getElementById('startMonitoringFlow');
+  const screenMonitorCreche = document.getElementById('screen-monitor-creche');
+  const screenMonitorDetails = document.getElementById('screen-monitor-details');
+  const monitorForm = document.getElementById('monitorForm');
+  const monitorDetailsForm = document.getElementById('monitorDetailsForm');
+  const monitorCrecheNameInput = document.getElementById('monitorCrecheName');
+  const monitorSubtitle = document.getElementById('monitorSubtitle');
+  const recentMonitorsWrap = document.getElementById('recentMonitorsWrap');
+  const recentMonitorsList = document.getElementById('recentMonitorsList');
+
   let currentCreche = '';
+  let currentType = 'screening'; // 'screening' or 'monitoring'
 
   // --- LOGIN LOGIC ---
   const checkLogin = () => {
@@ -53,20 +64,35 @@ document.addEventListener('DOMContentLoaded', () => {
       screenLogin.classList.remove('active');
       screenNav.classList.add('active');
       screenCreche.classList.remove('active');
+      screenMonitorCreche.classList.remove('active');
+      screenDetails.classList.remove('active');
+      screenMonitorDetails.classList.remove('active');
       appTopbar.style.display = 'flex';
     } else {
       screenLogin.classList.add('active');
       screenNav.classList.remove('active');
       screenCreche.classList.remove('active');
+      screenMonitorCreche.classList.remove('active');
+      screenDetails.classList.remove('active');
+      screenMonitorDetails.classList.remove('active');
       appTopbar.style.display = 'none';
     }
   };
 
   // --- SCREEN TRANSITIONS ---
   startScreeningFlow.addEventListener('click', () => {
+    currentType = 'screening';
     renderRecentCreches();
     screenNav.classList.remove('active');
     screenCreche.classList.add('active');
+    backBtn.style.visibility = 'visible';
+  });
+
+  startMonitoringFlow.addEventListener('click', () => {
+    currentType = 'monitoring';
+    renderRecentMonitors();
+    screenNav.classList.remove('active');
+    screenMonitorCreche.classList.add('active');
     backBtn.style.visibility = 'visible';
   });
 
@@ -74,8 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (screenDetails.classList.contains('active')) {
       screenDetails.classList.remove('active');
       screenCreche.classList.add('active');
-    } else {
+    } else if (screenMonitorDetails.classList.contains('active')) {
+      screenMonitorDetails.classList.remove('active');
+      screenMonitorCreche.classList.add('active');
+    } else if (screenCreche.classList.contains('active') || screenMonitorCreche.classList.contains('active')) {
       screenCreche.classList.remove('active');
+      screenMonitorCreche.classList.remove('active');
       screenNav.classList.add('active');
       backBtn.style.visibility = 'hidden';
     }
@@ -119,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const age = crecheAgeInput.value.trim();
     const fullName = `${name} (Age: ${age})`;
 
-    // Validation: Check if this Name (Age) already exists
+    // Validation
     const storedRecent = localStorage.getItem('recentCreches');
     if (storedRecent) {
       const recent = JSON.parse(storedRecent);
@@ -132,11 +162,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     ageError.style.display = 'none';
     currentCreche = fullName;
-    crecheSubtitle.innerText = 'Screening for: ' + currentCreche;
+    crecheSubtitle.innerText = 'Screening: ' + currentCreche;
     
-    // Transition UI
     screenCreche.classList.remove('active');
     screenDetails.classList.add('active');
+    backBtn.style.visibility = 'visible';
+  });
+
+  monitorForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = monitorCrecheNameInput.value.trim();
+    currentCreche = name; // Just the name for monitoring
+    monitorSubtitle.innerText = 'Monitoring: ' + currentCreche;
+    
+    screenMonitorCreche.classList.remove('active');
+    screenMonitorDetails.classList.add('active');
     backBtn.style.visibility = 'visible';
   });
 
@@ -194,68 +234,135 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- SAVE CONFIRMATION LOGIC ---
-  let pendingData = null;
-
   screeningForm.addEventListener('submit', (e) => {
     e.preventDefault();
-
-    // Prepare data (but don't save yet)
-    const formattedDate = new Date().toISOString().split('T')[0];
-    pendingData = {
-      id: Date.now(),
-      date: formattedDate,
-      screener: localStorage.getItem('loggedInUser') || 'eddy',
-      creche: currentCreche,
-      screened: parseInt(document.getElementById('screened').value),
-      cariesFree: parseInt(document.getElementById('cariesFree').value),
-      abscess: parseInt(document.getElementById('abscess').value),
-      initialCaries: parseInt(document.getElementById('initialCaries').value)
-    };
-
-    // Show Confirmation Modal
-    confirmSaveModal.classList.add('open');
+    preparePendingData('screening');
   });
+
+  monitorDetailsForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    preparePendingData('monitoring');
+  });
+
+  function preparePendingData(type) {
+    const formattedDate = new Date().toISOString().split('T')[0];
+    
+    if (type === 'screening') {
+      pendingData = {
+        id: Date.now(),
+        date: formattedDate,
+        type: type,
+        screener: localStorage.getItem('loggedInUser') || 'eddy',
+        creche: currentCreche,
+        screened: parseInt(document.getElementById('screened').value) || 0,
+        cariesFree: parseInt(document.getElementById('cariesFree').value) || 0,
+        abscess: parseInt(document.getElementById('abscess').value) || 0,
+        initialCaries: parseInt(document.getElementById('initialCaries').value) || 0
+      };
+    } else {
+      pendingData = {
+        id: Date.now(),
+        date: formattedDate,
+        type: type,
+        screener: localStorage.getItem('loggedInUser') || 'eddy',
+        creche: currentCreche,
+        consentForms: parseInt(document.getElementById('m_consent').value) || 0,
+        toothBrushes: parseInt(document.getElementById('m_brushes').value) || 0,
+        toothPastes: parseInt(document.getElementById('m_pastes').value) || 0,
+        normsAndStandards: document.getElementById('m_norms').checked,
+        childrenEducated: parseInt(document.getElementById('m_children_ed').value) || 0,
+        parentsEducated: parseInt(document.getElementById('m_parents_ed').value) || 0,
+        fluorideVarnish1: parseInt(document.getElementById('m_varnish1').value) || 0,
+        fluorideVarnish2: parseInt(document.getElementById('m_varnish2').value) || 0,
+        fluorideVarnish3: parseInt(document.getElementById('m_varnish3').value) || 0
+      };
+    }
+
+    confirmSaveModal.classList.add('open');
+  }
 
   confirmSaveBtn.addEventListener('click', () => {
     if (!pendingData) return;
 
-    // Save to LocalStorage
     saveRecord(pendingData);
 
-    // Save to RecentCreches history key for validation and quick list
+    // Save to relevant history key
+    const key = pendingData.type === 'screening' ? 'recentCreches' : 'recentMonitors';
     let recent = [];
-    const storedRecent = localStorage.getItem('recentCreches');
+    const storedRecent = localStorage.getItem(key);
     if (storedRecent) recent = JSON.parse(storedRecent);
     
     if (!recent.includes(pendingData.creche)) {
       recent.push(pendingData.creche);
-      localStorage.setItem('recentCreches', JSON.stringify(recent));
+      localStorage.setItem(key, JSON.stringify(recent));
     }
 
+    const typeSaved = pendingData.type;
     pendingData = null;
-
-    // Close Modal
     confirmSaveModal.classList.remove('open');
 
-    // Reset Form
+    // Reset Forms
     screeningForm.reset();
+    monitorDetailsForm.reset();
     crecheForm.reset();
+    monitorForm.reset();
     currentCreche = '';
 
-    // Go back to dashboard (screen 1)
+    // Go back to dashboard
     screenDetails.classList.remove('active');
+    screenMonitorDetails.classList.remove('active');
     screenNav.classList.add('active');
     backBtn.style.visibility = 'hidden';
 
-    // Show Toast Notification
-    showToast();
+    showToast(typeSaved);
   });
 
   cancelSaveBtn.addEventListener('click', () => {
     confirmSaveModal.classList.remove('open');
     pendingData = null;
   });
+
+  function renderRecentMonitors() {
+    const stored = localStorage.getItem('recentMonitors');
+    if (!stored) {
+      recentMonitorsWrap.style.display = 'none';
+      return;
+    }
+
+    const recent = JSON.parse(stored);
+    if (recent.length === 0) {
+      recentMonitorsWrap.style.display = 'none';
+      return;
+    }
+
+    recentMonitorsWrap.style.display = 'block';
+    recentMonitorsList.innerHTML = '';
+
+    recent.reverse().slice(0, 5).forEach(name => {
+      const pill = document.createElement('div');
+      pill.className = 'recent-pill';
+      pill.innerHTML = `<div class="recent-pill-txt">${name}</div>`;
+      
+      pill.addEventListener('click', () => {
+        monitorCrecheNameInput.value = name;
+        monitorForm.requestSubmit(); // Auto-continue for convenience
+      });
+      
+      recentMonitorsList.appendChild(pill);
+    });
+  }
+
+  function showToast(type) {
+    const title = toast.querySelector('.modal-title');
+    const sub = toast.querySelector('.modal-sub');
+    title.innerText = type === 'monitoring' ? 'Monitoring Saved' : 'Screening Saved';
+    sub.innerText = 'The data has been stored locally.';
+    
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
 
   async function triggerSync() {
     let records = [];
