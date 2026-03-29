@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginError = document.getElementById('loginError');
   const appTopbar = document.getElementById('appTopbar');
   const logoutBtn = document.getElementById('logoutBtn');
+  const togglePassword = document.getElementById('togglePassword');
+  const loginPass = document.getElementById('loginPass');
 
   let currentCreche = '';
 
@@ -73,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const user = document.getElementById('loginUser').value;
-    const pass = document.getElementById('loginPass').value;
+    const pass = loginPass.value;
 
     if (user === 'eddy' && pass === '1') {
       localStorage.setItem('isLoggedIn', 'true');
@@ -81,7 +83,15 @@ document.addEventListener('DOMContentLoaded', () => {
       checkLogin();
     } else {
       loginError.style.display = 'block';
+      loginPass.value = ''; // Clear password on failure
+      loginPass.focus();
     }
+  });
+
+  togglePassword.addEventListener('click', () => {
+    const type = loginPass.getAttribute('type') === 'password' ? 'text' : 'password';
+    loginPass.setAttribute('type', type);
+    togglePassword.innerText = type === 'password' ? '👁️' : '🙈';
   });
 
   logoutBtn.addEventListener('click', () => {

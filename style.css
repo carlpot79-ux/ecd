@@ -253,11 +253,19 @@
     width: 100%;
     margin-top: 20px;
   }
-  #loginError {
-    background: var(--red-bg);
-    padding: 10px;
-    border-radius: var(--r-sm);
-    margin-bottom: 20px;
+  #loginForm input {
+    padding: 16px;
+    font-size: 18px;
+  }
+  #loginForm #loginPass {
+    padding-right: 48px;
+  }
+  #togglePassword {
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+  #togglePassword:active {
+    opacity: 1;
   }
 
   /* DASHBOARD NAV */
