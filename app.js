@@ -117,13 +117,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const name = crecheNameInput.value.trim();
     const age = crecheAgeInput.value.trim();
-    const fullName = `${name} (${age})`;
+    const fullName = `${name} (Age: ${age})`;
 
     // Validation: Check if this Name (Age) already exists
-    const stored = localStorage.getItem('screeningRecords');
-    if (stored) {
-      const records = JSON.parse(stored);
-      const exists = records.some(r => r.creche.toLowerCase() === fullName.toLowerCase());
+    const storedRecent = localStorage.getItem('recentCreches');
+    if (storedRecent) {
+      const recent = JSON.parse(storedRecent);
+      const exists = recent.some(r => r.toLowerCase() === fullName.toLowerCase());
       if (exists) {
         ageError.style.display = 'block';
         return;
@@ -142,22 +142,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- RECENT CRECHES LOGIC ---
   function renderRecentCreches() {
-    const stored = localStorage.getItem('screeningRecords');
+    const stored = localStorage.getItem('recentCreches');
     if (!stored) {
       recentCrechesWrap.style.display = 'none';
       return;
     }
 
-    const records = JSON.parse(stored);
-    if (records.length === 0) {
+    const recent = JSON.parse(stored); // Array of "Name (Age: X)"
+    if (recent.length === 0) {
       recentCrechesWrap.style.display = 'none';
       return;
     }
 
-    // Group by Creche Name (before brackets)
-    const history = {}; // name -> set of ages
-    records.forEach(r => {
-      const match = r.creche.match(/^(.*) \((.*)\)$/);
+    // Group by Creche Name
+    const history = {};
+    recent.forEach(fullName => {
+      const match = fullName.match(/^(.*) \((?:[Aa]ge: )?(.*)\)$/);
       if (match) {
         const name = match[1];
         const age = match[2];
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
       pill.className = 'recent-pill';
       pill.innerHTML = `
         <div class="recent-pill-name">${name}</div>
-        <div class="recent-pill-ages">Done: ${ages}</div>
+        <div class="recent-pill-ages">Age: ${ages}</div>
       `;
       
       pill.addEventListener('click', () => {
@@ -225,6 +225,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Save to LocalStorage
     saveRecord(pendingData);
+
+    // Save to RecentCreches history key for validation and quick list
+    let recent = [];
+    const storedRecent = localStorage.getItem('recentCreches');
+    if (storedRecent) recent = JSON.parse(storedRecent);
+    
+    if (!recent.includes(pendingData.creche)) {
+      recent.push(pendingData.creche);
+      localStorage.setItem('recentCreches', JSON.stringify(recent));
+    }
+
     pendingData = null;
 
     // Close Modal
