@@ -248,48 +248,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const formattedDate = new Date().toISOString().split('T')[0];
     const screener = localStorage.getItem('loggedInUser') || 'eddy';
     
-    // Create the Universal Record (All columns available for Screening & Monitoring)
-    const baseRecord = {
-      id: Date.now(),
-      Date: formattedDate,
-      By: screener,
-      Type: type,
-      Creche: currentCreche,
-      // Screening Columns
-      'Screened': 0,
-      'Caries Free': 0,
-      'Abscess': 0,
-      'Initial Caries': 0,
-      // Monitoring Columns
-      'New consent': 0,
-      'Tooth brushes': 0,
-      'Toothpaste': 0,
-      'Norms and Standards': false,
-      'Children Educated': 0,
-      'Parents Educated': 0,
-      'FV1': 0,
-      'FV2': 0,
-      'FV3': 0
-    };
-
     if (type === 'screening') {
-      baseRecord['Screened'] = parseInt(document.getElementById('screened').value) || 0;
-      baseRecord['Caries Free'] = parseInt(document.getElementById('cariesFree').value) || 0;
-      baseRecord['Abscess'] = parseInt(document.getElementById('abscess').value) || 0;
-      baseRecord['Initial Caries'] = parseInt(document.getElementById('initialCaries').value) || 0;
+      // Clean, single-sheet package for "Screenings"
+      pendingData = {
+        id: Date.now(),
+        'Type': 'screening',
+        'Date': formattedDate,
+        'Screener': screener,
+        'Creche': currentCreche,
+        'Screened': parseInt(document.getElementById('screened').value) || 0,
+        'Caries Free': parseInt(document.getElementById('cariesFree').value) || 0,
+        'Abscess': parseInt(document.getElementById('abscess').value) || 0,
+        'Initial Caries': parseInt(document.getElementById('initialCaries').value) || 0
+      };
     } else {
-      baseRecord['New consent'] = parseInt(document.getElementById('m_consent').value) || 0;
-      baseRecord['Tooth brushes'] = parseInt(document.getElementById('m_brushes').value) || 0;
-      baseRecord['Toothpaste'] = parseInt(document.getElementById('m_pastes').value) || 0;
-      baseRecord['Norms and Standards'] = document.getElementById('m_norms').checked;
-      baseRecord['Children Educated'] = parseInt(document.getElementById('m_children_ed').value) || 0;
-      baseRecord['Parents Educated'] = parseInt(document.getElementById('m_parents_ed').value) || 0;
-      baseRecord['FV1'] = parseInt(document.getElementById('m_varnish1').value) || 0;
-      baseRecord['FV2'] = parseInt(document.getElementById('m_varnish2').value) || 0;
-      baseRecord['FV3'] = parseInt(document.getElementById('m_varnish3').value) || 0;
+      // Clean, single-sheet package for "Monitorings"
+      pendingData = {
+        id: Date.now(),
+        'Type': 'monitoring',
+        'Date': formattedDate,
+        'By': screener,
+        'Creche': currentCreche,
+        'New Consent': parseInt(document.getElementById('m_consent').value) || 0,
+        'Tooth brushes': parseInt(document.getElementById('m_brushes').value) || 0,
+        'Toothpaste': parseInt(document.getElementById('m_pastes').value) || 0,
+        'Norms and Standards': document.getElementById('m_norms').checked,
+        'Children Educated': parseInt(document.getElementById('m_children_ed').value) || 0,
+        'Parents Educated': parseInt(document.getElementById('m_parents_ed').value) || 0,
+        'FV1': parseInt(document.getElementById('m_varnish1').value) || 0,
+        'FV2': parseInt(document.getElementById('m_varnish2').value) || 0,
+        'FV3': parseInt(document.getElementById('m_varnish3').value) || 0
+      };
     }
 
-    pendingData = baseRecord;
     confirmSaveModal.classList.add('open');
   }
 
