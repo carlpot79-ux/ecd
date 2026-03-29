@@ -181,10 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const pill = document.createElement('div');
       pill.className = 'recent-pill';
-      pill.innerHTML = `
-        <div class="recent-pill-name">${name}</div>
-        <div class="recent-pill-ages">Age: ${ages}</div>
-      `;
+      pill.innerHTML = `<div class="recent-pill-txt">${name} (Age: ${ages})</div>`;
       
       pill.addEventListener('click', () => {
         crecheNameInput.value = name;

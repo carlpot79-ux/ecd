@@ -280,8 +280,7 @@
     min-width: 120px;
   }
   .recent-pill:active { transform: scale(0.95); }
-  .recent-pill-name { font-weight: 500; font-size: 14px; color: var(--text); }
-  .recent-pill-ages { font-size: 10px; color: var(--text3); margin-top: 2px; letter-spacing: 0.02em; }
+  .recent-pill-txt { font-weight: 500; font-size: 15px; color: var(--text); white-space: nowrap; }
 
   /* DASHBOARD NAV */
   .nav-grid {

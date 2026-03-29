@@ -31,16 +31,16 @@
 
         <div class="divider"></div>
 
-        <form id="loginForm">
+        <form id="loginForm" autocomplete="off">
           <div class="form-block">
             <label class="form-lbl" for="loginUser">USERNAME</label>
-            <input type="text" id="loginUser" name="loginUser" placeholder="Username" required>
+            <input type="text" id="loginUser" name="loginUser" placeholder="Username" required autocomplete="off">
           </div>
 
           <div class="form-block">
             <label class="form-lbl" for="loginPass">PASSWORD</label>
             <div style="position: relative;">
-              <input type="password" id="loginPass" name="loginPass" placeholder="Password" required>
+              <input type="password" id="loginPass" name="loginPass" placeholder="Password" required autocomplete="off">
               <button type="button" id="togglePassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px; padding: 4px;">👁️</button>
             </div>
           </div>
@@ -100,15 +100,15 @@
           </div>
         </div>
 
-        <form id="crecheForm">
+        <form id="crecheForm" autocomplete="off">
           <div class="form-block">
             <label class="form-lbl" for="crecheName">CRECHE NAME</label>
-            <input type="text" id="crecheName" name="crecheName" placeholder="e.g. Sunny Days" required>
+            <input type="text" id="crecheName" name="crecheName" placeholder="e.g. Sunny Days" required autocomplete="off">
           </div>
 
           <div class="form-block">
             <label class="form-lbl" for="crecheAge">AGE GROUP</label>
-            <input type="text" id="crecheAge" name="crecheAge" placeholder="e.g. 4-5" required>
+            <input type="text" id="crecheAge" name="crecheAge" placeholder="e.g. 4-5" required autocomplete="off">
             <div id="ageError" style="color: var(--red); font-size: 12px; margin-top: 6px; display: none;">
               This age group has already been screened for this creche.
             </div>
@@ -132,25 +132,25 @@
 
         <div class="divider"></div>
 
-        <form id="screeningForm">
+        <form id="screeningForm" autocomplete="off">
           <div class="form-block">
             <label class="form-lbl" for="screened">NUMBER OF CHILDREN SCREENED</label>
-            <input type="number" id="screened" name="screened" min="0" placeholder="e.g. 25" required>
+            <input type="number" id="screened" name="screened" min="0" placeholder="e.g. 25" required autocomplete="off">
           </div>
 
           <div class="form-block">
             <label class="form-lbl" for="cariesFree">CHILDREN CARIES FREE</label>
-            <input type="number" id="cariesFree" name="cariesFree" min="0" placeholder="e.g. 15" required>
+            <input type="number" id="cariesFree" name="cariesFree" min="0" placeholder="e.g. 15" required autocomplete="off">
           </div>
 
           <div class="form-block">
             <label class="form-lbl" for="abscess">CHILDREN WITH ABSCESS</label>
-            <input type="number" id="abscess" name="abscess" min="0" placeholder="e.g. 2" required>
+            <input type="number" id="abscess" name="abscess" min="0" placeholder="e.g. 2" required autocomplete="off">
           </div>
 
           <div class="form-block">
             <label class="form-lbl" for="initialCaries">INITIAL STAGE CARIES</label>
-            <input type="number" id="initialCaries" name="initialCaries" min="0" placeholder="e.g. 8" required>
+            <input type="number" id="initialCaries" name="initialCaries" min="0" placeholder="e.g. 8" required autocomplete="off">
           </div>
 
           <button type="submit" class="primary-btn" id="screeningBtn" style="margin-top: 20px;">
