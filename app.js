@@ -20,11 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const screenDetails = document.getElementById('screen-details');
   const crecheSubtitle = document.getElementById('crecheSubtitle');
   const backBtn = document.getElementById('backBtn');
-  const userNameBlock = document.getElementById('userNameBlock');
-  const userNameDisplayBlock = document.getElementById('userNameDisplayBlock');
-  const displayUserName = document.getElementById('displayUserName');
-  const changeNameBtn = document.getElementById('changeNameBtn');
-  const userNameInput = document.getElementById('userName');
   const syncStatus = document.getElementById('syncStatus');
   const loginForm = document.getElementById('loginForm');
   const screenLogin = document.getElementById('screen-login');
@@ -79,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (user === 'eddy' && pass === '1') {
       localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('loggedInUser', user); // Store username
       loginError.style.display = 'none';
       checkLogin();
     } else {
@@ -102,42 +98,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Run initial check
   checkLogin();
   
-  // Initialization for Name Setup
-  let savedName = localStorage.getItem('screenerName');
-  if (savedName) {
-    userNameBlock.style.display = 'none';
-    userNameDisplayBlock.style.display = 'block';
-    displayUserName.innerText = savedName;
-    userNameInput.required = false;
-  } else {
-    userNameInput.required = true;
-  }
-
-  changeNameBtn.addEventListener('click', () => {
-    userNameBlock.style.display = 'block';
-    userNameDisplayBlock.style.display = 'none';
-    userNameInput.value = savedName || '';
-    userNameInput.required = true;
-    userNameInput.focus();
-  });
-
   crecheForm.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    // Save User Name if a new one was entered
-    const enteredName = userNameInput.value.trim();
-    if (enteredName) {
-      localStorage.setItem('screenerName', enteredName);
-      savedName = enteredName; // Update local state
-      
-      // Update UI for next time
-      userNameBlock.style.display = 'none';
-      userNameDisplayBlock.style.display = 'block';
-      displayUserName.innerText = savedName;
-      userNameInput.required = false;
-      userNameInput.value = '';
-    }
-
     currentCreche = document.getElementById('crecheName').value;
     crecheSubtitle.innerText = 'Screening for: ' + currentCreche;
     
@@ -154,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formData = {
       id: Date.now(),
       date: new Date().toISOString(),
-      screener: savedName || 'Unknown',
+      screener: localStorage.getItem('loggedInUser') || 'Unknown',
       creche: currentCreche,
       screened: parseInt(document.getElementById('screened').value),
       cariesFree: parseInt(document.getElementById('cariesFree').value),
