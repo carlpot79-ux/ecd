@@ -12,6 +12,8 @@ import { SUBDISTRICT_HIERARCHY, Region } from './constants';
 const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbz66smbZSsT6IyZj7uOYrEA9YffzX1W6lz3nHlXHtAHCrLHSXhC25TikNvziuOrxtLcqA/exec';
 
 type Screen = 'login' | 'nav' | 'screening-creche' | 'screening-details' | 'monitoring-creche' | 'monitoring-details';
+type RecentScreening = { key: string; crecheName: string; region: string; subdistrict: string; age: string; };
+type RecentMonitor  = { crecheName: string; region: string; subdistrict: string; };
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('login');
@@ -32,10 +34,11 @@ export default function App() {
   const [showToast, setShowToast] = useState(false);
   const [toastType, setToastType] = useState<'screening' | 'monitoring'>('screening');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [pendingData, setPendingData] = useState<AppData | null>(null);
 
-  const [recentCreches, setRecentCreches] = useState<string[]>([]);
-  const [recentMonitors, setRecentMonitors] = useState<string[]>([]);
+  const [recentCreches, setRecentCreches] = useState<RecentScreening[]>([]);
+  const [recentMonitors, setRecentMonitors] = useState<RecentMonitor[]>([]);
 
   // Form states
   const [screeningForm, setScreeningForm] = useState({
@@ -71,10 +74,19 @@ export default function App() {
     }
 
     const storedRecentCreches = localStorage.getItem('recentCreches');
-    if (storedRecentCreches) setRecentCreches(JSON.parse(storedRecentCreches));
+    if (storedRecentCreches) {
+      const parsed = JSON.parse(storedRecentCreches);
+      // backwards compat: old format was plain strings — discard
+      if (parsed.length === 0 || typeof parsed[0] !== 'string') setRecentCreches(parsed);
+      else localStorage.removeItem('recentCreches');
+    }
 
     const storedRecentMonitors = localStorage.getItem('recentMonitors');
-    if (storedRecentMonitors) setRecentMonitors(JSON.parse(storedRecentMonitors));
+    if (storedRecentMonitors) {
+      const parsed = JSON.parse(storedRecentMonitors);
+      if (parsed.length === 0 || typeof parsed[0] !== 'string') setRecentMonitors(parsed);
+      else localStorage.removeItem('recentMonitors');
+    }
 
     updateSyncStatus();
   }, []);
@@ -149,7 +161,11 @@ export default function App() {
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('loggedInUser');
     setIsLoggedIn(false);
+    setLoggedInUser('');
+    setLoginPass('');
+    setShowLogoutModal(false);
     setScreen('login');
   };
 
@@ -236,16 +252,28 @@ export default function App() {
 
     // Update history
     if (pendingData.Type === 'screening') {
-      const fullName = `${pendingData.Creche} (Age: ${pendingData.Age})`;
-      if (!recentCreches.includes(fullName)) {
-        const newRecent = [...recentCreches, fullName];
+      const key = `${pendingData.Creche} (Age: ${pendingData.Age})`;
+      if (!recentCreches.find(r => r.key === key)) {
+        const entry: RecentScreening = {
+          key,
+          crecheName: pendingData.Creche,
+          region: selectedRegion,
+          subdistrict: selectedSubdistrict,
+          age: pendingData.Age
+        };
+        const newRecent = [...recentCreches, entry];
         setRecentCreches(newRecent);
         localStorage.setItem('recentCreches', JSON.stringify(newRecent));
       }
       setToastType('screening');
     } else {
-      if (!recentMonitors.includes(pendingData.Creche)) {
-        const newRecent = [...recentMonitors, pendingData.Creche];
+      if (!recentMonitors.find(r => r.crecheName === pendingData.Creche)) {
+        const entry: RecentMonitor = {
+          crecheName: pendingData.Creche,
+          region: selectedRegion,
+          subdistrict: selectedSubdistrict
+        };
+        const newRecent = [...recentMonitors, entry];
         setRecentMonitors(newRecent);
         localStorage.setItem('recentMonitors', JSON.stringify(newRecent));
       }
@@ -297,10 +325,10 @@ export default function App() {
           >
             <ChevronLeft size={24} />
           </button>
-          <div className="topbar-title">Dental Screening</div>
+          <div className="topbar-title">ECD</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             <div style={{ color: syncColor, fontSize: '11px', fontWeight: 500 }}>{syncStatus}</div>
-            <button onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+            <button onClick={() => setShowLogoutModal(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
               <LogOut size={18} />
             </button>
           </div>
@@ -424,19 +452,19 @@ export default function App() {
                 <div style={{ marginBottom: '24px' }}>
                   <div className="hero-label" style={{ fontSize: '10px' }}>RECENT CRECHES</div>
                   <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '10px', marginTop: '8px' }}>
-                    {recentCreches.slice(-5).reverse().map((fullName, i) => (
+                    {recentCreches.slice(-5).reverse().map((recent, i) => (
                       <div 
                         key={i} 
                         className="recent-pill"
                         onClick={() => {
-                          const match = fullName.match(/^(.*) \(Age: (.*)\)$/);
-                          if (match) {
-                            setCurrentCrecheName(match[1]);
-                            setCurrentAge('');
-                          }
+                          setCurrentCrecheName(recent.crecheName);
+                          setSelectedRegion(recent.region as Region);
+                          setSelectedSubdistrict(recent.subdistrict);
+                          setCurrentAge('');
                         }}
                       >
-                        <div className="recent-pill-txt">{fullName}</div>
+                        <div className="recent-pill-txt">{recent.crecheName}</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text3)', marginTop: '2px' }}>{recent.subdistrict}</div>
                       </div>
                     ))}
                   </div>
@@ -657,13 +685,18 @@ export default function App() {
                 <div style={{ marginBottom: '24px' }}>
                   <div className="hero-label" style={{ fontSize: '10px' }}>RECENT CRECHES</div>
                   <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '10px', marginTop: '8px' }}>
-                    {recentMonitors.slice(-5).reverse().map((name, i) => (
+                    {recentMonitors.slice(-5).reverse().map((recent, i) => (
                       <div 
                         key={i} 
                         className="recent-pill"
-                        onClick={() => setCurrentCrecheName(name)}
+                        onClick={() => {
+                          setCurrentCrecheName(recent.crecheName);
+                          setSelectedRegion(recent.region as Region);
+                          setSelectedSubdistrict(recent.subdistrict);
+                        }}
                       >
-                        <div className="recent-pill-txt">{name}</div>
+                        <div className="recent-pill-txt">{recent.crecheName}</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text3)', marginTop: '2px' }}>{recent.subdistrict}</div>
                       </div>
                     ))}
                   </div>
@@ -691,16 +724,6 @@ export default function App() {
 
                 <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
                   <div style={{ flex: 1 }}>
-                    <label className="form-lbl">CRECHE NAME</label>
-                    <input 
-                      type="text" 
-                      value={currentCrecheName}
-                      onChange={(e) => setCurrentCrecheName(e.target.value)}
-                      placeholder="e.g. Sunny Days" 
-                      required 
-                    />
-                  </div>
-                  <div style={{ flex: 1 }}>
                     <label className="form-lbl">SUBDISTRICT</label>
                     <select 
                       value={selectedSubdistrict}
@@ -714,6 +737,16 @@ export default function App() {
                         <option key={sub} value={sub}>{sub}</option>
                       ))}
                     </select>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label className="form-lbl">CRECHE NAME</label>
+                    <input 
+                      type="text" 
+                      value={currentCrecheName}
+                      onChange={(e) => setCurrentCrecheName(e.target.value)}
+                      placeholder="e.g. Sunny Days" 
+                      required 
+                    />
                   </div>
                 </div>
 
@@ -894,6 +927,33 @@ export default function App() {
                 className="modal-save"
               >
                 Save Data
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {showLogoutModal && (
+        <div className="modal-overlay">
+          <motion.div 
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            className="modal"
+          >
+            <div className="modal-title">Log Out</div>
+            <div className="modal-sub">Are you sure you want to log out?</div>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button 
+                onClick={() => setShowLogoutModal(false)}
+                className="modal-cancel"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleLogout}
+                className="modal-save"
+              >
+                Log Out
               </button>
             </div>
           </motion.div>
