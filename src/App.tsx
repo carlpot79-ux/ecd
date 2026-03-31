@@ -145,9 +145,11 @@ export default function App() {
   }, [triggerSync]);
 
   // --- HANDLERS ---
+  const ACCOUNTS: Record<string, string> = { eddy: '1', gov: 'rhs' };
+
   const handleLogin = (e: FormEvent) => {
     e.preventDefault();
-    if (loggedInUser === 'eddy' && loginPass === '1') {
+    if (ACCOUNTS[loggedInUser] === loginPass) {
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('loggedInUser', loggedInUser);
       setIsLoggedIn(true);
