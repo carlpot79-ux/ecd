@@ -1,0 +1,5 @@
+{
+  "name": "Dental Screening App",
+  "description": "A PWA for dental screening and monitoring data entry with offline support and Google Sheets integration.",
+  "requestFramePermissions": []
+}
