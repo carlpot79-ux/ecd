@@ -412,7 +412,7 @@ export default function App() {
             <div className="pad">
               <div className="hero">
                 <div className="hero-label">DASHBOARD</div>
-                <div className="hero-sub">Welcome back, {loggedInUser}. What would you like to do?</div>
+                <div className="hero-sub">Welcome back. What would you like to do?</div>
               </div>
 
               <div className="divider" />
